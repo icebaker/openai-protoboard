@@ -7,6 +7,7 @@
   import TimeAtom from '../../atoms/Time.svelte';
   import EmptyAtom from '../../atoms/Empty.svelte';
   import StateAtom from '../../atoms/State.svelte';
+  import Glimpse from '../../molecules/Glimpse.svelte';
 
   import Prompt from './Prompt.svelte';
 
@@ -49,27 +50,12 @@
     {/if}
   {:else}
     {#each glimpses as glimpse}
-      <div class="glimpse">
-        <div class="row glimpse-header border-bottom">
-          <div class="col key-value">
-            <strong>Knowledge:</strong>
-            <span class="text-danger-emphasis font-monospace">
-              <i class="bi bi-file-binary" />
-              {glimpse.source}
-            </span>
-          </div>
-
-          <div class="col key-value">
-            <strong>Certainty:</strong>
-            <span class="text-warning-emphasis">
-              {Presenter.number(glimpse._additional.certainty, undefined, 10)}
-            </span>
-          </div>
-        </div>
-
-        <div class="font-monospace glimpse-content text-wrap text-break">
-          {glimpse.content}
-        </div>
+      <div class="glimpse border-top">
+        <Glimpse {glimpse}>
+          Centainty: <span class="text-danger-emphasis"
+            >{Presenter.number(glimpse._additional.certainty, 0, 10)}</span
+          >
+        </Glimpse>
       </div>
     {/each}
   {/if}
@@ -86,19 +72,8 @@
   }
 
   .glimpse {
-    margin: 2em 0 4em;
-    padding-top: 2em;
-  }
-
-  .glimpse-header {
-    padding-bottom: 1em;
-  }
-
-  .key-value {
-    text-align: center;
-  }
-
-  .glimpse-content {
-    padding: 1em;
+    padding-top: 1em;
+    margin: 0;
+    margin-bottom: 0em;
   }
 </style>

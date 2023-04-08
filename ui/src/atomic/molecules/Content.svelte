@@ -9,7 +9,7 @@
   import 'prismjs/themes/prism-okaidia.css';
   import 'prism-svelte';
 
-  export let message;
+  export let content;
 
   let html = '';
 
@@ -20,8 +20,8 @@
     });
   }
 
-  $: if (message) {
-    html = marked.parse(message);
+  $: if (content) {
+    html = marked.parse(content);
     afterUpdate(highlightCode);
   }
 

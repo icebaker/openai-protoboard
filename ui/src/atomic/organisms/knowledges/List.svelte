@@ -60,7 +60,7 @@
               <a
                 href={downloadLink(knowledge)}
                 class="font-monospace d-inline-block text-truncate"
-                style="max-width: 30em;"
+                style="max-width: 20em;"
               >
                 {knowledge.source}
               </a>

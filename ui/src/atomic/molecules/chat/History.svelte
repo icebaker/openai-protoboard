@@ -1,7 +1,7 @@
 <script>
   import TimeAtom from '../../atoms/Time.svelte';
-  import Message from './Message.svelte';
-  import Glimpse from './Glimpse.svelte';
+  import Content from '../Content.svelte';
+  import Glimpse from '../Glimpse.svelte';
   import System from './System.svelte';
 
   export let chat;
@@ -12,7 +12,7 @@
   {#each chat.history as event}
     {#if event.glimpse}
       <div class="message border-bottom">
-        <Glimpse {event} />
+        <Glimpse glimpse={event.glimpse} />
       </div>
     {:else if event.input.message.role === 'system'}
       <div class="message border-bottom">
@@ -29,7 +29,7 @@
           }`}
         >
           <div>
-            <Message message={event.input.message.content} />
+            <Content content={event.input.message.content} />
           </div>
         </div>
         {#if event.input.message.role !== 'user'}
