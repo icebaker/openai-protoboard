@@ -5,27 +5,27 @@ class Protoboard {
     return `http://${environment.PROTOBOARD_API_ADDRESS}`;
   }
 
-  static async download_link_from_glimpse(glimpse) {
+  static download_link_from_glimpse(protoboardAPI, glimpse) {
     const params = new URLSearchParams({
       hash: glimpse.knowledge_hash,
       scope: glimpse.scope,
       model: glimpse.model
     });
 
-    const url = new URL(`${await Protoboard.api()}/knowledges/download`);
+    const url = new URL(`${protoboardAPI}/knowledges/download`);
     url.search = params.toString();
 
     return url.toString();
   }
 
-  static async download_link(knowledge) {
+  static download_link(protoboardAPI, knowledge) {
     const params = new URLSearchParams({
       hash: knowledge.hash,
       scope: knowledge.scope,
       model: knowledge.model
     });
 
-    const url = new URL(`${await Protoboard.api()}/knowledges/download`);
+    const url = new URL(`${protoboardAPI}/knowledges/download`);
     url.search = params.toString();
 
     return url.toString();

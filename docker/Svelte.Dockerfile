@@ -1,6 +1,7 @@
 FROM node:19.7.0-buster-slim AS builder
 COPY ./ui /app
 WORKDIR /app
+RUN npm install
 RUN npm run build
 
 FROM node:19.7.0-buster-slim

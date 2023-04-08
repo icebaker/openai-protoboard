@@ -22,14 +22,21 @@
 
   let isMounted = false;
 
+  let protoboardAPI = undefined;
+
   onMount(async () => {
     isMounted = true;
+    protoboardAPI = await Protoboard.api();
     await load();
   });
 
   $: {
     if (isMounted && at) load();
   }
+
+  const downloadLink = (knowledge) => {
+    return Protoboard.download_link(protoboardAPI, knowledge);
+  };
 </script>
 
 <div>
@@ -51,7 +58,7 @@
           <tr>
             <td>
               <a
-                href={Protoboard.download_link(knowledge)}
+                href={downloadLink(knowledge)}
                 class="font-monospace d-inline-block text-truncate"
                 style="max-width: 30em;"
               >
