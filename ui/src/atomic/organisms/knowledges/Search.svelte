@@ -74,6 +74,6 @@
   .glimpse {
     padding-top: 1em;
     margin: 0;
-    margin-bottom: 0em;
+    margin-bottom: -0.2em;
   }
 </style>

@@ -57,9 +57,10 @@
         {#each knowledges as knowledge}
           <tr>
             <td>
+              <i class="bi bi-file-binary text-warning-emphasis" />
               <a
                 href={downloadLink(knowledge)}
-                class="font-monospace d-inline-block text-truncate"
+                class="download font-monospace d-inline-block text-truncate"
                 style="max-width: 20em;"
               >
                 {knowledge.source}
@@ -77,3 +78,9 @@
     </table>
   {/if}
 </div>
+
+<style>
+  .download {
+    vertical-align: middle;
+  }
+</style>

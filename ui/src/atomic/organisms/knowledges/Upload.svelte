@@ -38,29 +38,48 @@
     return classes.join(' ');
   };
 
+  let selectedFiles = null;
+
   const internalCallback = () => {
     state = 'waiting';
+    selectedFiles = null;
     if (callback) callback();
+  };
+
+  let fileInputElement;
+
+  const handleClick = () => {
+    if (fileInputElement) fileInputElement.click();
   };
 </script>
 
+<input
+  type="file"
+  bind:this={fileInputElement}
+  on:change={handleDrop}
+  bind:files={selectedFiles}
+  hidden
+  multiple
+/>
+
 <div class="drag-container">
-  <div
+  <button
     class={dragClass(state)}
+    on:click={handleClick}
     on:drop={handleDrop}
     on:dragover={handleDragOver}
     on:dragleave={handleDragLeave}
   >
     {#if state === 'uploading'}
-      <div class="icon">
+      <div class="icon text-secondary">
         <i class="bi bi-hourglass-split" />
       </div>
     {:else}
-      <div class="icon">
+      <div class="icon text-secondary">
         <i class="bi bi-upload" />
       </div>
     {/if}
-  </div>
+  </button>
 </div>
 
 <Modal
@@ -71,7 +90,7 @@
   let:data
 >
   {#if data}
-    <UploadForm dragEvent={data.event} at={data.at} {scope} callback={internalCallback} />
+    <UploadForm event={data.event} at={data.at} {scope} callback={internalCallback} />
   {/if}
 </Modal>
 
@@ -82,6 +101,7 @@
   }
 
   .drag-area {
+    background: transparent;
     width: 100%;
     height: 100%;
     border: 2px dashed;

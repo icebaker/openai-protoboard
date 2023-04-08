@@ -6,7 +6,7 @@
   import Presenter from '../../../helpers/presenter.js';
   import Protoboard from '../../../components/protoboard.js';
 
-  export let dragEvent;
+  export let event = undefined;
   export let at;
 
   export let scope = undefined;
@@ -26,7 +26,11 @@
     previousAt = at;
     estimations = {};
     estimationsOverview = null;
-    files = dragEvent.dataTransfer.files;
+    if (event.target.files) {
+      files = event.target.files;
+    } else {
+      files = event.dataTransfer.files;
+    }
     await estimateTokens();
   };
 
