@@ -1,0 +1,27 @@
+{
+  Get{
+    Glimpse(
+      nearVector: {
+        vector: {{vector}},
+        distance: {{distance}}
+      }
+      where: {
+        path: ["scope"],
+        operator: Equal,
+        valueText: "{{scope}}"
+      }
+      limit: {{limit}}
+    ) {
+      key
+      model
+      scope
+      content
+      source
+      path
+      knowledge_hash
+      _additional {
+        certainty
+      }
+    }
+  }
+}

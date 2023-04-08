@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  ui:
+    image: openai-protoboard-ui
+    environment:
+      PORT: 3090
+      PROTOBOARD_API_ADDRESS: localhost:3091
+    depends_on:
+      - api
+    ports:
+      - 3090:3090
+
+  api:
+    image: openai-protoboard-api
+    environment:
+      PORT: 3091
+      ENVIRONMENT: production
+      PYTHON_GATEWAY_ADDRESS: python-gateway:3094
+      BADGER_DB_ADDRESS: badger-db:3092
+      WEAVIATE_ADDRESS: weaviate:8080
+      OPENAI_API_KEY: YOUR-API-KEY
+    volumes:
+      - ./data/api:/app/data
+    depends_on:
+      - badger-db
+      - weaviate
+      - python-gateway
+    ports:
+      - 3091:3091
+
+  badger-db:
+    image: icebaker/badger-db:0.0.1
+    environment:
+      BADGER_DB_DATA_PATH: /badger-db/data
+      BADGER_DB_CONTEXT: protoboard
+      BADGER_DB_HOST: 0.0.0.0
+      BADGER_DB_PORT: 3092
+    volumes:
+      - ./data/badger-db:/badger-db/data
+    ports:
+      - 3092:3092
+
+  weaviate:
+    image: semitechnologies/weaviate:1.18.3
+    ports:
+    - 3093:8080
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - ./data/weaviate:/var/lib/weaviate
+  
+  python-gateway:
+    image: openai-protoboard-python-gateway
+    environment:
+      PORT: 3094
+    ports:
+      - 3094:3094

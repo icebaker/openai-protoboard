@@ -1,0 +1,16 @@
+.env
+docker-compose.yml
+
+data/*
+data/api/*
+data/badger-db/*
+data/weaviate/*
+
+!data/.gitkeep
+!data/api
+!data/badger-db
+!data/weaviate
+
+!data/api/.gitkeep
+!data/badger-db/.gitkeep
+!data/weaviate/.gitkeep
