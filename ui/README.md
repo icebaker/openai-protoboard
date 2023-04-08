@@ -1,6 +1,5 @@
 # Protoboard UI
 
-- [About](#about)
 - [Development](#development)
 - [Building](#building)
 
@@ -29,8 +28,8 @@ npm run test:unit
 Running linters:
 
 ```sh
-npm run lint
 npm run format
+npm run lint --fix
 ```
 
 ## Building

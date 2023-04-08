@@ -42,7 +42,7 @@
 <div>
   {#if state === 'loading'}
     <StateAtom {state} />
-  {:else if knowledges.length === 0}
+  {:else if !knowledges || knowledges.length === 0}
     <EmptyAtom />
   {:else}
     <table class="table">

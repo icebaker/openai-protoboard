@@ -63,7 +63,13 @@
   </div>
 </div>
 
-<Modal bind:this={modalElement} size="lg" title="Upload Knowledge" let:data>
+<Modal
+  bind:this={modalElement}
+  onComplete={internalCallback}
+  size="lg"
+  title="Upload Knowledge"
+  let:data
+>
   {#if data}
     <UploadForm dragEvent={data.event} at={data.at} {scope} callback={internalCallback} />
   {/if}

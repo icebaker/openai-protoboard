@@ -5,12 +5,18 @@
 
   export let size = 'md';
 
+  export let onComplete = undefined;
+
   let modalElement = undefined;
   let modal = undefined;
 
   onMount(() => {
     if (modalElement) {
       modal = new bootstrap.Modal(modalElement, {});
+
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        if (onComplete) onComplete();
+      });
     }
   });
 

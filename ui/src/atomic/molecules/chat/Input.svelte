@@ -1,12 +1,11 @@
 <script>
   import Protoboard from '../../../components/protoboard.js';
+  import TextAreaAtom from '../../atoms/TextArea.svelte';
 
   export let chat;
   export let updateHistory;
 
   let state = 'ready';
-  let value = '';
-  let textAreaElement = undefined;
 
   let errorMessage = undefined;
 
@@ -27,34 +26,14 @@
       updateHistory(updatedChat.chat.history);
     }
   };
-
-  const handleEnterKey = async (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-
-      const message = `${value}`;
-
-      value = value.replace(/(\r\n|\n|\r)/gm, '');
-      textAreaElement.value = value;
-      value = '';
-
-      await sendMessage(message);
-    }
-  };
 </script>
 
-<div class="form-floating">
-  <textarea
-    bind:this={textAreaElement}
-    on:keydown={handleEnterKey}
-    bind:value
-    disabled={state === 'loading'}
-    class="form-control"
-    placeholder="send a message here"
-    id="floatingTextarea"
-  />
-  <label for="floatingTextarea">Send a message...</label>
-</div>
+<TextAreaAtom
+  label="Send a message..."
+  placeholder="send a message here"
+  disabled={state === 'loading'}
+  handler={sendMessage}
+/>
 
 {#if state === 'error'}
   <div class="state text-danger-emphasis">
@@ -90,5 +69,9 @@
   .state {
     padding-top: 2em;
     text-align: center;
+  }
+
+  .input-area {
+    overflow-y: hidden;
   }
 </style>
