@@ -2,9 +2,9 @@
 
 A [_protoboard_](https://en.wikipedia.org/wiki/Breadboard) for [OpenAI](https://platform.openai.com/overview) exploration, aimed at helping people develop intuition, rapidly prototype ideas, and foster innovation with OpenAI technology.
 
-![8cd62093-08a7-4d80-918f-6e8ebbc52389](https://user-images.githubusercontent.com/113217272/230728178-75396b12-362d-4ccc-b61d-16b34a5817db.png)
+![cover](https://user-images.githubusercontent.com/113217272/230732022-6b3dbd71-9b81-4a7d-880b-c86f4e054541.jpg)
+> _Image artificially created by [Midjourney](https://www.midjourney.com)_
 
-> Image artificially created by [Midjourney](https://www.midjourney.com)
 
 - [Running](#running)
 - [Screenshots](#screenshots)
