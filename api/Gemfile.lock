@@ -109,6 +109,7 @@ GEM
     uuid (2.3.9)
       macaddr (~> 1.0)
     webrick (1.8.1)
+    zache (0.12.0)
 
 PLATFORMS
   x86_64-linux
@@ -131,6 +132,7 @@ DEPENDENCIES
   rubocop-rspec (~> 2.19)
   ruby-openai (~> 3.7)
   uuid (~> 2.3, >= 2.3.9)
+  zache (~> 0.12.0)
 
 RUBY VERSION
    ruby 3.2.1p31

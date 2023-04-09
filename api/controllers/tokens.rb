@@ -29,8 +29,7 @@ module TokensController
 
     content = FilesController.read(params[:file])
 
-    # (n * 2) because of intersections: true
-    tokens = Tokens.instance.count(content:, model: 'text-embedding-ada-002') * 2
+    tokens = Tokens.instance.count(content:, model: params[:model])
 
     dollars = (((tokens.to_f / 1000.0).ceil.to_f * COST_PER_1K_TOKENS) * 100).ceil / 100.0
 

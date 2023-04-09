@@ -11,6 +11,8 @@
   export let id;
   let chat = undefined;
 
+  let action = 'complete';
+
   const load = async () => {
     state = 'loading';
 
@@ -29,6 +31,10 @@
   const updateHistory = (history) => {
     chat.history = history;
     at = new Date();
+  };
+
+  const setAction = (newAction) => {
+    action = newAction;
   };
 
   let isMounted = false;
@@ -56,9 +62,49 @@
   {:else}
     <div>
       <ChatHeader {chat} />
+
+      {#if chat.kind === 'completion'}
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              on:click={() => {
+                setAction('complete');
+              }}
+              class="nav-link active"
+              id="complete-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#complete-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="complete-tab-pane"
+              aria-selected="true"
+            >
+              Complete
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              on:click={() => {
+                setAction('edit');
+              }}
+              class="nav-link"
+              id="edit-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#edit-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="edit-tab-pane"
+              aria-selected="false"
+            >
+              Edit
+            </button>
+          </li>
+        </ul>
+      {/if}
+
       <div class="prompt">
         <div class="chat-input">
-          <ChatInput {chat} {updateHistory} />
+          <ChatInput {action} {chat} {updateHistory} />
         </div>
         <ChatHistory {at} {chat} />
       </div>
@@ -80,6 +126,6 @@
   }
 
   .chat {
-    margin-top: 2em;
+    margin-top: 0em;
   }
 </style>

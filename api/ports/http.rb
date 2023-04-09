@@ -21,7 +21,9 @@ module HTTP
     # Models --------------------------------------------------------
 
     route.get 'models' do
-      Helpers::Roda.safe_json(ModelsController.index)
+      Helpers::Roda.safe_json(
+        ModelsController.index(Helpers::Roda.symbolize_keys(request.params))
+      )
     end
 
     # Chats ---------------------------------------------------------

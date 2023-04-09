@@ -7,19 +7,9 @@ require_relative '../components/badger'
 require_relative '../helpers/roda'
 
 module EmbeddingsController
-  def self.models
-    LLM.instance.client.models.list.parsed_response['data'].map do |model|
-      {
-        id: model['id'],
-        owner: model['owned_by'],
-        created_at: Time.at(model['created'])
-      }
-    end.sort_by { |model| -model[:created_at].to_i }.filter do |model|
-      model[:id] =~ /embed/
-    end
-  end
-
   def self.create(params)
+    params[:input] = params[:input].to_s
+
     hash = Digest::SHA256.hexdigest(params[:input])
 
     params[:model] = params[:model] || 'text-embedding-ada-002'

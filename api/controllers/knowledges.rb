@@ -15,11 +15,6 @@ require_relative './files'
 require_relative './knowledges/glimpses'
 
 module KnowledgesController
-  MAX_INPUT_TOKENS = 4096
-  CHUNCK_PERCENTAGE = 0.25
-
-  MODEL = 'text-embedding-ada-002'
-
   def self.index(params)
     Badger.instance.get("knowledges:#{params[:scope]}") || []
   end
@@ -44,25 +39,29 @@ module KnowledgesController
     knowledge_hash = Digest::SHA256.hexdigest(content)
 
     badger_key = [
-      'knowledge', params[:scope], MODEL, knowledge_hash
+      'knowledge', params[:scope], params[:model], knowledge_hash
     ].compact.join(':')
 
     return Badger.instance.get(badger_key) if Badger.instance.exists?(badger_key)
 
     tokens = Tokens.instance.count(content:)
 
-    parts = (tokens / (MAX_INPUT_TOKENS.to_f * CHUNCK_PERCENTAGE)).ceil
+    parts = (tokens / params[:tokens_per_glimpse].to_f).ceil
 
-    fragments = split_into_n_parts(content, parts).concat(
-      split_into_n_parts(content, parts, intersections: true)
-    )
+    fragments = split_into_n_parts(content, parts)
+
+    if params[:intersections] != 'false' && params[:intersections]
+      fragments.concat(
+        split_into_n_parts(content, parts, intersections: true)
+      )
+    end
 
     embeddings = []
 
     fragments.each do |fragment|
       embeddings << EmbeddingsController.create(
         {
-          model: MODEL,
+          model: params[:model],
           input: fragment
         }
       )
@@ -84,6 +83,9 @@ module KnowledgesController
           vector: embedding[:output][:data][0][:embedding]
         }
       )
+    rescue StandardError => e
+      require 'pry'
+      binding.pry
     end
 
     knowledge = {
@@ -92,8 +94,8 @@ module KnowledgesController
       hash: knowledge_hash,
       source: params[:file][:filename],
       scope: params[:scope],
-      model: MODEL,
-      tokens:,
+      model: params[:model],
+      tokens: params[:intersections] == 'true' ? tokens * 2 : tokens,
       glimpses: glimpses.map { |glimpse| glimpse[:key] },
       path:
     }

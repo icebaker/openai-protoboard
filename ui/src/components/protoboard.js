@@ -115,10 +115,11 @@ class Protoboard {
     }
   }
 
-  static async estimateTokens(file, index) {
+  static async estimateTokens(model, file, index) {
     const formData = new FormData();
 
     formData.append('file', file, file.name);
+    formData.append('model', model);
 
     const response = await fetch(`${await Protoboard.api()}/tokens/estimate`, {
       method: 'POST',
@@ -134,11 +135,18 @@ class Protoboard {
     }
   }
 
-  static async uploadKnowledge(scope, file) {
+  static async uploadKnowledge(params, file) {
     const formData = new FormData();
 
     formData.append('file', file, file.name);
-    formData.append('scope', scope);
+
+    Object.keys(params).forEach((key) => {
+      if (params[key] === false) {
+        formData.append(key, 'false');
+      } else {
+        formData.append(key, params[key]);
+      }
+    });
 
     const response = await fetch(`${await Protoboard.api()}/knowledges`, {
       method: 'POST',

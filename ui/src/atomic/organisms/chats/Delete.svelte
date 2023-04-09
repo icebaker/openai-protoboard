@@ -40,7 +40,7 @@
   <StateAtom {state} />
 {:else}
   <div class="details">
-    <p>The following chat will be deleted:</p>
+    <p>The following will be deleted:</p>
 
     <div class="item">
       {#if chat.description}

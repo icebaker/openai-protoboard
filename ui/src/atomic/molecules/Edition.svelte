@@ -4,7 +4,7 @@
   import Content from './Content.svelte';
   import Protoboard from '../../components/protoboard.js';
 
-  export let glimpse;
+  export let edition;
 
   let state = 'closed';
 
@@ -23,14 +23,10 @@
     protoboardAPI = await Protoboard.api();
     ready = true;
   });
-
-  const downloadLink = (glimpse) => {
-    return Protoboard.download_link_from_glimpse(protoboardAPI, glimpse);
-  };
 </script>
 
 {#if ready}
-  <div class="glimpse">
+  <div class="edition">
     <div class="row">
       {#if $$slots.default}
         <div class="col-5">
@@ -38,15 +34,8 @@
         </div>
       {/if}
       <div class="col text-end">
-        <span class="text-warning-emphasis download">
-          <i class="bi bi-file-binary" />
-          <a
-            href={downloadLink(glimpse)}
-            class="font-monospace d-inline-block text-truncate"
-            style="max-width: 14em;"
-          >
-            {glimpse.source}
-          </a>
+        <span class="text-danger-emphasis download">
+          <span class="font-monospace"> Content </span>
         </span>
         <button on:click={toggle} type="button" class="toggler btn btn-sm btn-outline-secondary">
           {#if state === 'closed'}
@@ -59,14 +48,14 @@
     </div>
     {#if state === 'open'}
       <div class="content border-end text-start">
-        <Content direction="start" content={glimpse.content} />
+        <Content direction="start" content={edition.content} />
       </div>
     {/if}
   </div>
 {/if}
 
 <style>
-  .glimpse {
+  .edition {
     margin-bottom: 1em;
   }
 

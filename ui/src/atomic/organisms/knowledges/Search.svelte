@@ -19,16 +19,31 @@
   let glimpses = [];
 
   const updateResults = (params) => {
-    glimpses = params.results;
+    glimpses = params.results.success;
 
     query = params.query;
 
     state = params.state;
   };
+
+  let formState = 'loading';
+  let models = undefined;
+
+  const prepareForm = async () => {
+    models = (await Protoboard.get('/models', { purpose: 'embedding' }))['success'];
+
+    formState = 'ready';
+  };
+
+  onMount(() => {
+    prepareForm();
+  });
 </script>
 
 <div>
-  <Prompt {scope} {updateResults} />
+  {#if formState == 'ready'}
+    <Prompt {scope} {updateResults} {models} />
+  {/if}
 
   {#if query !== undefined}
     <div class="query">
@@ -42,7 +57,7 @@
 
   {#if state === 'loading'}
     <StateAtom {state} />
-  {:else if glimpses.length === 0}
+  {:else if !Array.isArray(glimpses) || glimpses.length === 0}
     {#if query !== undefined}
       <EmptyAtom message="No glimpses found." />
     {:else}

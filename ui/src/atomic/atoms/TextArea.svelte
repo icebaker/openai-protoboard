@@ -7,19 +7,28 @@
   export let handler = undefined;
 
   let state = 'waiting';
-  let value = '';
+  export let value = '';
   let element = undefined;
 
-  const dispatchContent = (content) => {
-    if (handler) handler(content);
+  const dispatchContent = async (content) => {
+    if (handler) await handler(content);
   };
 
   const resizeInput = () => {
     element.style.height = 'auto';
-    element.style.height = element.scrollHeight + 10 + 'px';
+    const minHeight = 82;
+
+    let newHeight = element.scrollHeight + 10;
+
+    if (newHeight < minHeight) {
+      newHeight = minHeight;
+    }
+
+    element.style.height = newHeight + 'px';
   };
 
   onMount(() => {
+    const previousValue = `${value}`;
     resizeInput();
   });
 
@@ -29,7 +38,7 @@
 
   const onKeyDown = async (event) => {
     resizeInput();
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (handler && event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
 
       const content = `${value}`;
@@ -43,6 +52,8 @@
       await dispatchContent(content);
 
       resizeInput();
+
+      setTimeout(() => element.focus(), 200);
     }
   };
 

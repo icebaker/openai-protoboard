@@ -65,12 +65,21 @@
             </td>
             <td><TimeAtom at={chat.created_at} /></td>
             <td>
-              <a
-                href={`/sessions/${chat.scope}/chats/${chat.id}`}
-                class="btn btn-sm btn-outline-info"
-              >
-                <i class="bi bi-chat-dots" />
-              </a>
+              {#if chat.kind === 'completion'}
+                <a
+                  href={`/sessions/${chat.scope}/completions/${chat.id}`}
+                  class="btn btn-sm btn-outline-success"
+                >
+                  <i class="bi bi-terminal" />
+                </a>
+              {:else}
+                <a
+                  href={`/sessions/${chat.scope}/chats/${chat.id}`}
+                  class="btn btn-sm btn-outline-info"
+                >
+                  <i class="bi bi-chat-dots" />
+                </a>
+              {/if}
             </td>
             <td>
               <button
