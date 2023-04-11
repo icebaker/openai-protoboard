@@ -11,6 +11,7 @@ class LLM
 
   def initialize
     @client = OpenAI::Client.new(
+      uri_base: ENV.fetch('OPENAI_API_ADDRESS'),
       access_token: ENV.fetch('OPENAI_API_KEY')
     )
   end

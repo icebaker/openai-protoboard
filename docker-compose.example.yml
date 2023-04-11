@@ -19,6 +19,7 @@ services:
       PYTHON_GATEWAY_ADDRESS: python-gateway:3094
       BADGER_DB_ADDRESS: badger-db:3092
       WEAVIATE_ADDRESS: weaviate:8080
+      OPENAI_API_ADDRESS: https://api.openai.com/
       OPENAI_API_KEY: YOUR-API-KEY
     volumes:
       - ./data/api:/app/data
