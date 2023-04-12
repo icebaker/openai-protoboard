@@ -1,4 +1,3 @@
-<!-- MarkdownRenderer.svelte -->
 <script>
   import { onMount, afterUpdate } from 'svelte';
   import * as marked from 'marked';

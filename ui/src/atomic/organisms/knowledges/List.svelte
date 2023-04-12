@@ -1,6 +1,9 @@
 <script>
   import { onMount } from 'svelte';
 
+  import Modal from '../../templates/Modal.svelte';
+  import Summarize from './Summarize.svelte';
+
   import Presenter from '../../../helpers/presenter.js';
 
   import Protoboard from '../../../components/protoboard.js';
@@ -34,6 +37,12 @@
     if (isMounted && at) load();
   }
 
+  let modalElement = undefined;
+
+  const openSummarizeModal = (knowledge) => {
+    if (modalElement) modalElement.open({ at: new Date(), knowledge: knowledge });
+  };
+
   const downloadLink = (knowledge) => {
     return Protoboard.download_link(protoboardAPI, knowledge);
   };
@@ -48,9 +57,10 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Knowledge</th>
+          <th z="col">Knowledge</th>
           <th scope="col" width="1" class="text-center">Glimpses</th>
           <th scope="col" width="1" class="text-center">Tokens</th>
+          <th scope="col" width="1" class="text-center" />
         </tr>
       </thead>
       <tbody>
@@ -61,7 +71,7 @@
               <a
                 href={downloadLink(knowledge)}
                 class="download font-monospace d-inline-block text-truncate"
-                style="max-width: 19em;"
+                style="max-width: 17em;"
               >
                 {knowledge.source}
               </a>
@@ -72,12 +82,27 @@
             <td class="text-center">
               {Presenter.number(knowledge.tokens)}
             </td>
+            <td class="text-center">
+              <button
+                on:click={openSummarizeModal(knowledge)}
+                type="button"
+                class="btn btn-sm btn-outline-warning"
+              >
+                <i class="bi bi-file-zip" />
+              </button>
+            </td>
           </tr>
         {/each}
       </tbody>
     </table>
   {/if}
 </div>
+
+<Modal bind:this={modalElement} size="lg" title="Summarize" let:data>
+  {#if data}
+    <Summarize at={data.at} scope={scope} knowledge={data.knowledge} callback={load} />
+  {/if}
+</Modal>
 
 <style>
   .download {
