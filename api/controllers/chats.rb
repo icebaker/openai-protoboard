@@ -69,15 +69,19 @@ module ChatsController
     temperature = params[:temperature] || 0.7
     content = params[:content] || ''
 
-    glimpses = GlimpsesController.search(
-      {
-        scope: chat[:scope],
-        model: 'text-embedding-ada-002',
-        input: params[:message],
-        distance: params[:distance] || 0.80,
-        limit: params[:glimpses] || 1
-      }
-    )
+    glimpses = if (params[:glimpses]).zero?
+                 []
+               else
+                 GlimpsesController.search(
+                   {
+                     scope: chat[:scope],
+                     model: 'text-embedding-ada-002',
+                     input: params[:message],
+                     distance: params[:distance] || 0.80,
+                     limit: params[:glimpses] || 1
+                   }
+                 )
+               end
 
     if params[:content] != ''
       chat[:history] << {
@@ -191,15 +195,19 @@ module ChatsController
     #       Or would it just bring repeated glimpses?
     # Option 2: If the glimpse (or knolodge?) is already in the conversation,
     # remove the old one and add this new one!
-    glimpses = GlimpsesController.search(
-      {
-        scope: chat[:scope],
-        model: 'text-embedding-ada-002',
-        input: params[:message],
-        distance: params[:distance] || 0.80,
-        limit: params[:glimpses] || 1
-      }
-    )
+    glimpses = if (params[:glimpses]).zero?
+                 []
+               else
+                 GlimpsesController.search(
+                   {
+                     scope: chat[:scope],
+                     model: 'text-embedding-ada-002',
+                     input: params[:message],
+                     distance: params[:distance] || 0.80,
+                     limit: params[:glimpses] || 1
+                   }
+                 )
+               end
 
     glimpses&.reverse&.each do |glimpse|
       chat[:history] << {
