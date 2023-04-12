@@ -13,7 +13,7 @@
   export let scope;
   export let callback;
 
-  let state = 'loading';
+  let state = 'waiting';
 
   let previousAt = null;
   let protoboardAPI = undefined;
@@ -22,6 +22,8 @@
     tokens: 3086,
     model: 'gpt-3.5-turbo',
     scope: scope,
+    translate: false,
+    language: '',
     knowledge: null
   };
 
@@ -30,6 +32,7 @@
   let models;
 
   const prepareForm = async () => {
+    state = 'waiting';
     payload = JSON.parse(JSON.stringify(payloadTemplate));
     payload.knowledge = knowledge;
     models = (await Protoboard.get('/models', { purpose: 'chat' }))['success'];
@@ -75,17 +78,19 @@
   };
 </script>
 
-{#if state === 'loading'}
+{#if state === 'loading' || state === 'waiting'}
   <div class="loading">
     <div class="spinner-border text-info-emphasis" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
 
-    <p>
-      Summarizing. This may take a while.
-      <br />
-      Please be patient.
-    </p>
+    {#if state === 'loading'}
+      <p>
+        Summarizing. This may take a while.
+        <br />
+        Please be patient.
+      </p>
+    {/if}
   </div>
 {:else if state === 'error'}
   <div class="state">
@@ -147,7 +152,7 @@
         type="range"
         class="form-range"
         min="102"
-        max="7371"
+        max="3686"
         step="1"
         id="tokens"
         aria-describedby="tokensHelp"
@@ -157,7 +162,13 @@
         <div class="col">
           <div class="input-group">
             <div class="input-group-text">Tokens</div>
-            <input value={payload.tokens} type="text" readonly class="form-control" />
+            <input value={Presenter.number(payload.tokens)} type="text" readonly class="form-control" />
+          </div>
+        </div>
+        <div class="col">
+          <div class="input-group">
+            <div class="input-group-text">Words</div>
+            <input value={Presenter.number(parseInt(payload.tokens * (3.0 / 4.0), 10))} type="text" readonly class="form-control" />
           </div>
         </div>
         <div class="col">
@@ -189,9 +200,7 @@
       </div>
 
       <div id="tokensHelp" class="form-text">
-        Chat GPT tokens are text units the AI processes to generate and understand language. If you
-        expect to use the summary in chat conversations, it's recommended that you keep them within
-        a fraction of the chat history limit to avoid breaking a dialogue.
+        Chat GPT tokens are text units the AI processes to generate and understand language.
       </div>
     </div>
 
@@ -204,8 +213,36 @@
       </select>
     </div>
 
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="mb-3">
+          <label for="translation" class="form-label">Language</label>
+          <select bind:value={payload.translate} class="form-select" aria-label="translation">
+            <option value={false}>Keep the language of the source content</option>
+            <option value={true}>Translate to another language</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="mb-3">
+          <label for="language" class="form-label">Desired Langauge</label>
+          {#if payload.translate}
+            <input
+              bind:value={payload.language} disabled={!payload.translate}
+              placeholder="ja-JP, spanish, en-US, french..." type="text" class="form-control" />
+          {:else}
+            <input value="-" type="text" class="form-control" disabled />
+          {/if}
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-danger text-center" role="alert">
+      Summarizing is a beta feature. The results may be far from perfect. If you are trying to summarize large content like an entire book, it will be very slow and somewhat expensive.
+    </div>
+
     <div class="actions text-center">
-      <button type="submit" class="btn btn-primary"> Go ahead, summarize. </button>
+      <button type="submit" class="btn btn-danger">I want to try anyway, go ahead and summarize.</button>
     </div>
   </form>
 {:else}
@@ -214,7 +251,7 @@
 
 <style>
   .actions {
-    padding-top: 1em;
+    padding-top: 0;
     padding-bottom: 0.6em;
   }
 
