@@ -10,6 +10,7 @@ require_relative '../controllers/chats'
 require_relative '../controllers/embeddings'
 require_relative '../controllers/knowledges'
 require_relative '../controllers/knowledges/glimpses'
+require_relative '../controllers/knowledges/summaries'
 require_relative '../helpers/roda'
 
 module HTTP
@@ -71,6 +72,12 @@ module HTTP
     end
 
     # Knowledge -----------------------------------------------------
+
+    route.post 'knowledges/summaries' do
+      Helpers::Roda.safe_json(
+        SummariesController.create(Helpers::Roda.body_to_params(request))
+      )
+    end
 
     route.get 'knowledges/download' do
       data = KnowledgesController.download(Helpers::Roda.symbolize_keys(request.params))
