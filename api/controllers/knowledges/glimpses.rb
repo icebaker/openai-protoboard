@@ -53,7 +53,11 @@ module GlimpsesController
   end
 
   def self.search(params)
-    embedding = EmbeddingsController.create(params.slice(:model, :input))
+    embedding_params = params.slice(:model, :input)
+
+    embedding_params[:input] = params[:query] if !embedding_params[:input] && params[:query]
+
+    embedding = EmbeddingsController.create(embedding_params)
 
     vector = embedding[:output][:data][0][:embedding]
 

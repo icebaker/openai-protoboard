@@ -56,22 +56,18 @@ module KnowledgesController
       )
     end
 
-    embeddings = []
-
-    fragments.each do |fragment|
-      embeddings << EmbeddingsController.create(
-        {
-          model: params[:model],
-          input: fragment
-        }
-      )
-    end
+    path = FilesController.store(params[:file], badger_key)
 
     glimpses = []
 
-    path = FilesController.store(params[:file], badger_key)
+    fragments.each do |fragment|
+      embedding = EmbeddingsController.create(
+        {
+          model: params[:model],
+          input: fragment.force_encoding('UTF-8').scrub(' ')
+        }
+      )
 
-    embeddings.each do |embedding|
       glimpses << GlimpsesController.create(
         {
           knowledge_hash:,
@@ -83,9 +79,6 @@ module KnowledgesController
           vector: embedding[:output][:data][0][:embedding]
         }
       )
-    rescue StandardError => e
-      require 'pry'
-      binding.pry
     end
 
     knowledge = {
