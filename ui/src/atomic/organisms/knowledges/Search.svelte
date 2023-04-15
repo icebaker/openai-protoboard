@@ -55,7 +55,7 @@
     </div>
   {/if}
 
-  {#if state === 'loading'}
+  {#if state === 'loading' || state === 'error'}
     <StateAtom {state} />
   {:else if !Array.isArray(glimpses) || glimpses.length === 0}
     {#if query !== undefined}

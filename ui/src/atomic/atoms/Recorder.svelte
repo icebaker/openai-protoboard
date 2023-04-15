@@ -7,6 +7,7 @@ export let onTranscribed = undefined;
 export let onError = undefined;
 export let autoSubmit = false;
 
+let hasError = false;
 let recorder;
 let stream;
 let RecordRTC;
@@ -37,6 +38,7 @@ const toggleRecording = async () => {
 }
 
 const startRecording = async () => {
+  hasError = false;
   if(onRecording) onRecording();
   await loadRecordRTC();
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -106,6 +108,8 @@ const togglePlayback = () => {
   }
 }
 
+let errorMessage = null;
+
 const sendAudioToEndpoint = async (blob) => {
   sending = true;
   try {
@@ -113,7 +117,8 @@ const sendAudioToEndpoint = async (blob) => {
 
     if(onTranscribed) await onTranscribed(response, autoSubmit);
   } catch (error) {
-    console.error('Error sending audio:', error);
+    hasError = true;
+    errorMessage = error.message;
     if(onError) onError(error);
   }
   sending = false;
@@ -145,14 +150,19 @@ const sendAudioToEndpoint = async (blob) => {
   </button>
 
   {#if sending}
-    <span
-      class="loading btn btn-sm btn-secondary"
-      role="status"
-      aria-hidden="true"
+    <button class="loading btn btn-sm btn-secondary" type="button" disabled>
+      <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+      <span class="visually-hidden">Loading...</span>
+    </button>
+  {/if}
+
+  {#if hasError}
+    <button
+      class="btn btn-sm btn-danger error"
       disabled
     >
-      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    </span>
+     <i class="bi bi-exclamation-triangle-fill"></i>
+    </button>
   {/if}
 
   <audio
@@ -171,5 +181,12 @@ const sendAudioToEndpoint = async (blob) => {
   display: inline-block;
   margin-left: .6em;
   margin-right: -.3em;
+}
+.error {
+  margin-left:.6em;
+}
+
+.loading .spinner-grow {
+  margin-bottom: -.1em;
 }
 </style>

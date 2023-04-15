@@ -15,9 +15,14 @@
   let sessions = undefined;
 
   const load = async () => {
-    sessions = (await Protoboard.get('/sessions'))['success'];
+    const result = (await Protoboard.get('/sessions'));
 
-    state = 'success';
+    if(result['success']) {
+      sessions = result['success'];
+      state = 'success';
+    } else {
+      state = 'error';
+    }
   };
 
   let modalElement = undefined;
@@ -39,7 +44,7 @@
 </script>
 
 <div>
-  {#if state === 'loading'}
+  {#if state === 'loading' || state === 'error'}
     <StateAtom {state} />
   {:else if sessions.length === 0}
     <EmptyAtom />

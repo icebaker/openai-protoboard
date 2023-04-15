@@ -14,9 +14,15 @@
   let session = undefined;
 
   const load = async () => {
-    session = (await Protoboard.get(`/sessions/${id}`))['success'];
+    const result = (await Protoboard.get(`/sessions/${id}`));
 
-    state = 'success';
+    if(result['success']) {
+      session = result['success'];
+      state = 'success';
+    } else {
+      state = 'error';
+    }
+
   };
 
   let isMounted = false;

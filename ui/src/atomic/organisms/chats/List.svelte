@@ -15,9 +15,14 @@
   let chats = [];
 
   const load = async () => {
-    chats = (await Protoboard.get('/chats', { scope: scope }))['success'];
+    const result = (await Protoboard.get('/chats', { scope: scope }));
 
-    state = 'success';
+    if(result['success']) {
+      chats = result['success'];
+      state = 'success';
+    } else {
+      state = 'error';
+    }
   };
 
   let modalElement = undefined;
@@ -39,7 +44,7 @@
 </script>
 
 <div>
-  {#if state === 'loading'}
+  {#if state === 'loading' || state === 'error'}
     <StateAtom {state} />
   {:else if chats.length === 0}
     <EmptyAtom />

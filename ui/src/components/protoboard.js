@@ -41,15 +41,19 @@ class Protoboard {
     const url = new URL(`${await Protoboard.api()}${path}`);
     url.search = new URLSearchParams(params).toString();
 
-    const response = await fetch(url, {
-      headers: headers,
-      method: 'DELETE'
-    });
+    try {
+      const response = await fetch(url, {
+        headers: headers,
+        method: 'DELETE'
+      });
 
-    if (response.status !== 200) {
-      return { error: true };
-    } else {
-      return { success: await response.json() };
+      if (response.status !== 200) {
+        return { error: true };
+      } else {
+        return { success: await response.json() };
+      }
+    } catch (error) {
+      return { error: error.message };
     }
   }
 
@@ -58,16 +62,20 @@ class Protoboard {
       'Content-Type': 'application/json'
     };
 
-    const response = await fetch(`${await Protoboard.api()}${path}`, {
-      headers: headers,
-      method: 'POST',
-      body: JSON.stringify(params)
-    });
+    try {
+      const response = await fetch(`${await Protoboard.api()}${path}`, {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(params)
+      });
 
-    if (response.status !== 200) {
-      return { error: true };
-    } else {
-      return { success: await response.json() };
+      if (response.status !== 200) {
+        return { error: true };
+      } else {
+        return { success: await response.json() };
+      }
+    } catch (error) {
+      return { error: error.message };
     }
   }
 
@@ -120,16 +128,20 @@ class Protoboard {
 
     formData.append('audio', blob);
 
-    const response = await fetch(`${await Protoboard.api()}/audio`, {
-      method: 'POST',
-      body: formData
-    });
+    try {
+      const response = await fetch(`${await Protoboard.api()}/audio`, {
+        method: 'POST',
+        body: formData
+      });
 
-    if (response.status !== 200) {
-      return { error: true, response: response };
-    } else {
-      let result = await response.json();
-      return { success: result, response: response };
+      if (response.status !== 200) {
+        return { error: true, response: response };
+      } else {
+        let result = await response.json();
+        return { success: result, response: response };
+      }
+    } catch (error) {
+      return { error: error.message };
     }
   }
 

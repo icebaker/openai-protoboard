@@ -55,16 +55,16 @@
     payload.glimpses = parseInt(payload.glimpses, 10);
     payload.distance = parseFloat(payload.distance);
 
-    const updatedChat = (await Protoboard.post(`/chats/${chat.id}`, payload))['success'];
+    const response = (await Protoboard.post(`/chats/${chat.id}`, payload));
 
-    if (updatedChat['error']) {
+    if (response['error']) {
       state = 'error';
-      errorMessage = updatedChat['error']['message'];
-    } else if (!updatedChat) {
+      errorMessage = response['error']['message'];
+    } else if (!response['success']) {
       state = 'error';
     } else {
       state = 'ready';
-      updateHistory(updatedChat.chat.history);
+      updateHistory(response['success'].chat.history);
     }
   };
 
