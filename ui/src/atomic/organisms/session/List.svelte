@@ -15,9 +15,9 @@
   let sessions = undefined;
 
   const load = async () => {
-    const result = (await Protoboard.get('/sessions'));
+    const result = await Protoboard.get('/sessions');
 
-    if(result['success']) {
+    if (result['success']) {
       sessions = result['success'];
       state = 'success';
     } else {

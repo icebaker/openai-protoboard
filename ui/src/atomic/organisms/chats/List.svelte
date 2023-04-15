@@ -15,9 +15,9 @@
   let chats = [];
 
   const load = async () => {
-    const result = (await Protoboard.get('/chats', { scope: scope }));
+    const result = await Protoboard.get('/chats', { scope: scope });
 
-    if(result['success']) {
+    if (result['success']) {
       chats = result['success'];
       state = 'success';
     } else {

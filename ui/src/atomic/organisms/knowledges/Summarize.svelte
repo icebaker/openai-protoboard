@@ -35,9 +35,9 @@
     state = 'waiting';
     payload = JSON.parse(JSON.stringify(payloadTemplate));
     payload.knowledge = knowledge;
-    const result = (await Protoboard.get('/models', { purpose: 'chat' }));
+    const result = await Protoboard.get('/models', { purpose: 'chat' });
 
-    if(result['success']) {
+    if (result['success']) {
       models = (await Protoboard.get('/models', { purpose: 'chat' }))['success'];
       state = 'prepare';
     } else {

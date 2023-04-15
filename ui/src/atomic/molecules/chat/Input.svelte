@@ -55,7 +55,7 @@
     payload.glimpses = parseInt(payload.glimpses, 10);
     payload.distance = parseFloat(payload.distance);
 
-    const response = (await Protoboard.post(`/chats/${chat.id}`, payload));
+    const response = await Protoboard.post(`/chats/${chat.id}`, payload);
 
     if (response['error']) {
       state = 'error';
@@ -227,6 +227,7 @@
     placeholder={formLabels.placeholder}
     disabled={state === 'loading'}
     handler={sendMessage}
+    recorder={true}
   />
 </div>
 
