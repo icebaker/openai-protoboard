@@ -8,6 +8,15 @@
   import 'prismjs/themes/prism-okaidia.css';
   import 'prism-svelte';
 
+  const renderer = new marked.Renderer();
+  const originalTableRenderer = renderer.table;
+  renderer.table = function (header, body) {
+    return originalTableRenderer
+      .call(this, header, body)
+      .replace('<table>', '<table class="table table-sm">');
+  };
+  marked.setOptions({ renderer });
+
   export let content;
   export let direction;
 

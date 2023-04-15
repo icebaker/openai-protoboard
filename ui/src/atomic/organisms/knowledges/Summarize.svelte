@@ -162,13 +162,23 @@
         <div class="col">
           <div class="input-group">
             <div class="input-group-text">Tokens</div>
-            <input value={Presenter.number(payload.tokens)} type="text" readonly class="form-control" />
+            <input
+              value={Presenter.number(payload.tokens)}
+              type="text"
+              readonly
+              class="form-control"
+            />
           </div>
         </div>
         <div class="col">
           <div class="input-group">
             <div class="input-group-text">Words</div>
-            <input value={Presenter.number(parseInt(payload.tokens * (3.0 / 4.0), 10))} type="text" readonly class="form-control" />
+            <input
+              value={Presenter.number(parseInt(payload.tokens * (3.0 / 4.0), 10))}
+              type="text"
+              readonly
+              class="form-control"
+            />
           </div>
         </div>
         <div class="col">
@@ -228,8 +238,12 @@
           <label for="language" class="form-label">Desired Langauge</label>
           {#if payload.translate}
             <input
-              bind:value={payload.language} disabled={!payload.translate}
-              placeholder="ja-JP, spanish, en-US, french..." type="text" class="form-control" />
+              bind:value={payload.language}
+              disabled={!payload.translate}
+              placeholder="ja-JP, spanish, en-US, french..."
+              type="text"
+              class="form-control"
+            />
           {:else}
             <input value="-" type="text" class="form-control" disabled />
           {/if}
@@ -238,11 +252,14 @@
     </div>
 
     <div class="alert alert-danger text-center" role="alert">
-      Summarizing is a beta feature. The results may be far from perfect. If you are trying to summarize large content like an entire book, it will be very slow and somewhat expensive.
+      Summarizing is a beta feature. The results may be far from perfect. If you are trying to
+      summarize large content like an entire book, it will be very slow and somewhat expensive.
     </div>
 
     <div class="actions text-center">
-      <button type="submit" class="btn btn-danger">I want to try anyway, go ahead and summarize.</button>
+      <button type="submit" class="btn btn-danger"
+        >I want to try anyway, go ahead and summarize.</button
+      >
     </div>
   </form>
 {:else}

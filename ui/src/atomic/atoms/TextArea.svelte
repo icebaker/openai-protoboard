@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
 
+  import Recorder from './Recorder.svelte';
+
   export let disabled = false;
   export let label = 'Send a content...';
   export let placeholder = 'send a content here';
@@ -36,24 +38,36 @@
     resizeInput();
   };
 
-  const onKeyDown = async (event) => {
-    resizeInput();
-    if (handler && event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
+  const submitContent = async (clear) => {
+    const content = `${value}`;
 
-      const content = `${value}`;
-
+    if(clear === undefined || clear === 'before') {
       value = value.replace(/(\r\n|\n|\r)/gm, '');
       element.value = value;
       value = '';
 
       resizeInput();
+    }
 
-      await dispatchContent(content);
+    await dispatchContent(content);
 
-      resizeInput();
+    if(clear === undefined || clear === 'after') {
+      value = value.replace(/(\r\n|\n|\r)/gm, '');
+      element.value = value;
+      value = '';
+    }
 
-      setTimeout(() => element.focus(), 200);
+    resizeInput();
+
+    setTimeout(() => element.focus(), 200);
+
+  }
+
+  const onKeyDown = async (event) => {
+    resizeInput();
+    if (handler && event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      await submitContent();
     }
   };
 
@@ -94,6 +108,28 @@
       return 'form-control input-area';
     }
   };
+
+  const onRecording = () => {
+    disabled = true;
+    state = 'loading';
+  }
+
+  const onRecordingError = (error) => {
+    state = 'waiting';
+    disabled = false;
+  }
+
+  const onTranscribed = async (result, autoSubmit) => {
+    value = result['success']['text'];
+    if(autoSubmit) {
+      await submitContent('after');
+    } else {
+      disabled = false;
+      resizeInput();
+      setTimeout(() => element.focus(), 200);
+    }
+    state = 'waiting';
+  }
 </script>
 
 <div class="form-floating">
@@ -113,7 +149,14 @@
   <label for="floatingTextarea">{label}</label>
 </div>
 
+<div class="recorder">
+  <Recorder {onRecording} {onTranscribed} onError={onRecordingError} />
+</div>
+
 <style>
+  .recorder {
+    margin-top: 0em;
+  }
   .input-area {
     overflow-y: hidden;
   }

@@ -14,7 +14,7 @@ require_relative '../embeddings'
 require_relative '../knowledges'
 
 module SummariesController
-  MAXIMUM_GPT_35_TOKENS = (4096 * 0.9).to_i
+  MAXIMUM_GPT_35_TOKENS = (4096 * 0.50).to_i
 
   def self.create(params)
     badger_key = [
@@ -72,7 +72,12 @@ module SummariesController
               }
             )
 
-            Badger.instance.set(fragment_key, response)
+            begin
+              Badger.instance.set(fragment_key, response) if response['choices'][0]['message']['content']
+            rescue StandardError => e
+              require 'pry'
+              binding.pry
+            end
           end
 
           partial_summary += "\n#{response['choices'][0]['message']['content']}"

@@ -3,6 +3,7 @@
 require 'json'
 
 require_relative '../controllers/index'
+require_relative '../controllers/audio'
 require_relative '../controllers/sessions'
 require_relative '../controllers/tokens'
 require_relative '../controllers/models'
@@ -139,6 +140,13 @@ module HTTP
 
     route.delete 'sessions', String do |id|
       Helpers::Roda.safe_json(SessionsController.delete(id))
+    end
+
+    # Audio ---------------------------------------------------------
+    route.post 'audio' do
+      Helpers::Roda.safe_json(
+        AudioController.to_text(request.env['CONTENT_TYPE'], request.body.read)
+      )
     end
   end
 end

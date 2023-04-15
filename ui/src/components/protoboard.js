@@ -115,6 +115,24 @@ class Protoboard {
     }
   }
 
+  static async audioToText(blob) {
+    const formData = new FormData();
+
+    formData.append('audio', blob);
+
+    const response = await fetch(`${await Protoboard.api()}/audio`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.status !== 200) {
+      return { error: true, response: response };
+    } else {
+      let result = await response.json();
+      return { success: result, response: response };
+    }
+  }
+
   static async estimateTokens(model, file, index) {
     const formData = new FormData();
 

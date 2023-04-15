@@ -100,7 +100,7 @@
 
 <Modal bind:this={modalElement} size="lg" title="Summarize" let:data>
   {#if data}
-    <Summarize at={data.at} scope={scope} knowledge={data.knowledge} callback={load} />
+    <Summarize at={data.at} {scope} knowledge={data.knowledge} callback={load} />
   {/if}
 </Modal>
 
