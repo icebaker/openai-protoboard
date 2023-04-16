@@ -10,7 +10,9 @@ module AudioController
   def self.to_text(content_type, body)
     params = Helpers::Roda.parse_multipart_form_data(body, content_type)
 
-    path = "data/audio/#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}-#{SecureRandom.hex}.webm"
+    extension = params[:format] || 'webm'
+
+    path = "data/audio/#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}-#{SecureRandom.hex}.#{extension}"
 
     FileUtils.mkdir_p(PATH)
     File.write(path, params[:audio][:tempfile].read)
