@@ -4,10 +4,13 @@ require 'securerandom'
 
 require_relative '../components/llm'
 require_relative '../components/badger'
+require_relative '../components/tokens'
 require_relative '../helpers/roda'
 require_relative './knowledges/glimpses'
 
 module ChatsController
+  MAXIMUM_GPT_35_TOKENS_HISTORY = (4096 * 0.75).to_i
+
   def self.index(params)
     Badger.instance.get("chats:#{params[:scope]}") || []
   end
@@ -176,12 +179,12 @@ module ChatsController
     temperature = params[:temperature] || 0.7
 
     if chat[:history].empty?
+      input = {}
       chat[:history] << {
         at: Time.now,
         input: {
           model:,
           temperature:,
-          max_tokens: params[:max_tokens] || 1024,
           user: params[:user] || id,
           message: {
             role: 'system',
@@ -223,11 +226,17 @@ module ChatsController
 
     chat[:history] << {
       at: Time.now,
-      input: { model:, temperature:, message: { role: 'user', content: params[:message] } }
+      input: {
+        model:,
+        max_tokens: params[:max_tokens] || 1024,
+        temperature:,
+        message: { role: 'user', content: params[:message] }
+      }
     }
 
     input = {
       model:,
+      max_tokens: params[:max_tokens] || 1024,
       messages: chat[:history].map { |event| event[:input][:message] }, # Required.
       temperature:
     }
@@ -241,17 +250,31 @@ module ChatsController
     done = false
 
     until done
-      input = {
-        model:,
-        messages: chat[:history].map { |event| event[:input][:message] }, # Required.
-        temperature:
-      }
+      conversation = chat[:history].filter do |event|
+        event[:input][:message][:role] != 'system'
+      end.map { |event| event[:input][:message][:content] }.join('\n')
 
-      response = LLM.instance.client.chat(parameters: input)
+      tokens = Tokens.instance.count(content: conversation)
 
-      output = JSON.parse(response.to_s)
+      if tokens <= MAXIMUM_GPT_35_TOKENS_HISTORY || chat[:history].size <= 2
+        input = {
+          model:,
+          max_tokens: params[:max_tokens] || 1024,
+          messages: chat[:history].map { |event| event[:input][:message] }, # Required.
+          temperature:
+        }
 
-      if chat[:history].size > 2 && output['error'] && output['error']['code'] == 'context_length_exceeded'
+        response = LLM.instance.client.chat(parameters: input)
+
+        output = JSON.parse(response.to_s)
+      end
+
+      if chat[:history].size > 2 &&
+         (
+           tokens > MAXIMUM_GPT_35_TOKENS_HISTORY ||
+           (output['error'] && output['error']['code'] == 'context_length_exceeded')
+         )
+
         index_to_remove = nil
 
         # TODO: This way, a new glimpse will never join,
@@ -301,6 +324,7 @@ module ChatsController
       {
         at: Time.at(output['created']),
         input: { model:, temperature:,
+                 max_tokens: params[:max_tokens] || 1024,
                  message: Helpers::Roda.symbolize_keys(output['choices'][0]['message']) }
       }
     )
